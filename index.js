@@ -39,37 +39,45 @@ client.connect(err => {
             })
     })
 
-    app.get('/reviews',(req, res) => {
+    app.get('/reviews', (req, res) => {
         reviewsCollection.find({})
-        .toArray((err,documents) => {
-            res.send(documents)
-        })
+            .toArray((err, documents) => {
+                res.send(documents)
+            })
     })
 
     app.post('/addServices', (req, res) => {
         const service = req.body;
         console.log(service);
         servicesCollection.insertOne(service)
-        .then(result=>{
-            console.log(result.insertedCount)
-            res.send(result.insertedCount > 0)
-        })
+            .then(result => {
+                console.log(result.insertedCount)
+                res.send(result.insertedCount > 0)
+            })
     })
 
-    app.get('/services',(req, res)=>{
+    app.get('/services', (req, res) => {
         servicesCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
             })
     })
 
-    app.post('/makeAdmins', (req, res)=>{
+    app.post('/makeAdmins', (req, res) => {
         const admin = req.body;
         console.log(admin);
         adminsCollection.insertOne(admin)
-        .then(result=>{
-            console.log(result.insertedCount)
-        })
+            .then(result => {
+                console.log(result.insertedCount)
+            })
+    })
+
+    app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        adminsCollection.find({ email: email })
+            .toArray((err, admins) => {
+                res.send(admins.length > 0);
+            })
     })
 
 });
