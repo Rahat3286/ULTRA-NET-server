@@ -23,7 +23,55 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const serviceCollection = client.db("ultraNet").collection("services");
+    const servicesCollection = client.db("ultraNet").collection("services");
+    const reviewsCollection = client.db("ultraNet").collection("reviews");
+    const adminsCollection = client.db("ultraNet").collection("admins");
+
+    console.log('database connected');
+
+    app.post("/addReviews", (req, res) => {
+        const review = req.body;
+        console.log(review);
+        reviewsCollection.insertOne(review)
+            .then(result => {
+                console.log(result.insertedCount)
+                res.send(result.insertedCount > 0)
+            })
+    })
+
+    app.get('/reviews',(req, res) => {
+        reviewsCollection.find({})
+        .toArray((err,documents) => {
+            res.send(documents)
+        })
+    })
+
+    app.post('/addServices', (req, res) => {
+        const service = req.body;
+        console.log(service);
+        servicesCollection.insertOne(service)
+        .then(result=>{
+            console.log(result.insertedCount)
+            res.send(result.insertedCount > 0)
+        })
+    })
+
+    app.get('/services',(req, res)=>{
+        servicesCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents)
+            })
+    })
+
+    app.post('/makeAdmins', (req, res)=>{
+        const admin = req.body;
+        console.log(admin);
+        adminsCollection.insertOne(admin)
+        .then(result=>{
+            console.log(result.insertedCount)
+        })
+    })
+
 });
 
 app.listen(process.env.PORT || port);
