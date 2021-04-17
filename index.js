@@ -26,6 +26,7 @@ client.connect(err => {
     const servicesCollection = client.db("ultraNet").collection("services");
     const reviewsCollection = client.db("ultraNet").collection("reviews");
     const adminsCollection = client.db("ultraNet").collection("admins");
+    const bookingsCollection = client.db("ultraNet").collection("bookings")
 
     console.log('database connected');
 
@@ -77,6 +78,23 @@ client.connect(err => {
         adminsCollection.find({ email: email })
             .toArray((err, admins) => {
                 res.send(admins.length > 0);
+            })
+    })
+
+    app.post ('/addBookings',(req, res)=>{
+        const booking = req.body;
+        console.log(booking);
+        bookingsCollection.insertOne(booking)
+        .then(result=>{
+            console.log(result.insertedCount)
+            res.send(result.insertedCount > 0)
+        })
+    })
+
+    app.get('/order',(req, res)=>{
+        bookingsCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents)
             })
     })
 
